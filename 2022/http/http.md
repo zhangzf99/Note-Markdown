@@ -144,4 +144,174 @@ eg：比如你的网站从 HTTP 升级到了 HTTPS，以前的站点再也不能
 HTTP 灵活的特性，支持非常多的数据格式，那么这么多格式一起到达客户端，客户端怎么知道它的格式呢？
 HTTP 标记报文 body 部分的数据类型，这些类型体现在 **Content-Type** 这个字段，这是针对于发送端而言，接收端想要收到特定类型的数据，也可以用  **Accept** 字段。
 具体而言，这两个字段的取值可以分为几类：
+-text：text/html，text/plain，text/css 等；
+-image：image/gif，image/jepg，image/png等；
+-audio/video：audio/mpeg，video/mp4等；
+-application：application/json，application/javascript，application/pdf，application/octet-stream。
 
+### 压缩方式
+这些数据都会进行编码压缩的，采取什么样的压缩方式就体现在了发送方的**Content-Encoding**字段上。这个字段的取值有下面几种：
+-gzip：当今最流行的压缩格式
+-defalte：另外一种著名的压缩格式
+-br：一种专门为HTTP发明的压缩算法
+### 支持语言
+对于发送方而言，还有一个**Content-Language**字段，在需要实现国际化的方案中，可以用来指定支持的语言，在接收方对应的字段为**Accept-Language**。
+```
+// 发送端
+Content-Language: zh-CN, zh, en
+// 接收端
+Accept-Language: zh-CN, zh, en
+```
+### 字符集
+最后是一个比较特殊的字段，在接收端应为**Accept-Charset**，指定可以接受的字符集，而在发送端并没有对应的**Content-Charset'**，而是直接放在了**Content-Type**中，以**charset**属性指定。如：
+```
+// 发送端
+Content-Type: text/html; charset=utf-8
+// 接收端
+Accept-Charset: charset=utf-8
+```
+
+![3](E:\笔记\github笔记\Note-Markdown\2022\http\images\3.png)
+
+## 对于定长和不定长的数据，HTTP 是怎么传输的？
+### 定长包体
+对于定长包而言，发送端在传输的时候一般会带上**Content-Length**，来指明包体的长度。
+eg：使用一个 node.js 服务器来模拟一下：
+```js
+const http = require('http');
+
+const server = http.createServer();
+
+server.on('request', (req, res) => {
+  if(req.url === '/') {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Length', 10);
+    res.write("helloworld");
+  }
+})
+
+server.listen(8081, () => {
+  console.log("成功启动");
+})
+```
+启动成功后，浏览器中显示如下： helloworld。
+这是长度正常的情况，那不正确的情况是如何处理的？我们试着把这个长度设置的小一点：
+```
+res.setHeader('Content-Length', 8);
+```
+重启服务，再次访问，现在浏览器中内容如下：
+```
+hellowor
+```
+那后面的 ld 去哪里了呢？实际上是在 http 的响应体中直接被截去了。
+然后我们试着将这个长度设置得大一些：
+
+```
+res.setHeader('Content-Length', 12);
+```
+
+![](E:\笔记\github笔记\Note-Markdown\2022\http\images\4.jpg)
+
+此时浏览器显示：“该网页无法正常运作”，直接无法显示了。可以看到 **Content-Length** 对于 http 传输过程起到了十分关键的作用，如果设置不当可以直接导致传输失败。
+### 不定长包体
+```
+Transfer-Encoding: chunked
+```
+表示分块传输数据，设置这个字段后会自动产生两个效果：
+- Contnet-Length 字段会被忽略
+-  基于长连接持续推送动态内容
+
+## HTTP 如何处理大文件传输
+对于几百 M 或者上 G 的大文件来说，如果要一口气全部传输过来显然是不现实的，会有大量的等待时间，严重影响用户体验。因此，HTTP 针对这一场景，采取了**范围请求**的解决方案，允许客户端仅仅请求一个资源的一部分。
+### 如何支持
+当然，前提是服务器要支持范围请求，要支持这个功能，就必须加上这样一个响应头：  用来告知客户端这边是支持范围请求的。
+```
+Accept-Ranges: none
+```
+### Range 字段拆解
+对于客户端而言，他需要指定请求哪一部分，通过  **Range**  这个请求字段确定，格式为 **bytes=x-y**。
+### Range 的书写格式
+- 0-499 表示从开始到第 499 个字节
+- 500-  表示第 500 字节到文件终点
+- -100  表示文件的最后 100 个字节
+服务器收到请求后，首先验证范围是否合法，如果越界了那么返回 416 错误码，否则读取相应片段，返回 206 状态码。
+同时，服务器需要添加 Content-Range 字段，这个字段的格式根据请求头中 Range 字段的不同而有所差异。
+具体来说，请求**单段数据**和请求**多段数据**，响应头是不一样的。
+举个例子：
+```
+// 单段数据
+Range: bytes=0-9
+// 多段数据
+Range: bytes=0-9, 30-39
+```
+接下来，我们就分别来讨论这两种情况。
+#### 单段数据
+对于单段数据的请求，返回的响应如下：
+```
+HTTP/1.1 206 Partial Content
+Content-Length: 10
+Accept-Ranges: bytes
+Content-Range: bytes 0-9/100
+
+i am xxxxx
+```
+值得注意的是**Contnet-Range**字段，**0-9**表示请求的返回，**100**表示资源的总大小，很好理解。
+#### 多段数据
+多段数据得到的响应会是下面这个形式：
+```
+HTTP/1.1 206 Partial Content
+Content-Type: multipart/byteranges; boundary=00000010101
+Content-Length: 189
+Connection: keep-alive
+Accept-Ranges: bytes
+
+
+--00000010101
+Content-Type: text/plain
+Content-Range: bytes 0-9/96
+
+i am xxxxx
+--00000010101
+Content-Type: text/plain
+Content-Range: bytes 20-29/96
+
+eex jspy e
+--00000010101--
+```
+这个时候出现了一个非常关键的字段**Content-Type: multipart/byteranges;boundary=00000010101**，它代表的信息量是这样的：
+- 请求一定是多段数据请求
+- 响应体中的分隔符是 00000010101
+因此，在响应体中各段数据之间会由这里指定的分隔符分开，而且在最后的分隔符末尾添上**--**表示结束。
+以上就是对 http 针对大文件传输所采用的手段。
+
+## HTTP 中如何处理表单数据的提交
+在 http 中，有两种主要的表单提交方式，体现在两种不同的 **Contnet-Type** 中取值：
+- application/x-www-form-urlencoded
+- multipart/fom-data
+由于表单提交一般是 **POST** 请求，很少考虑 **GET** ，因此这里我们默认提交的数据放在请求体中。
+### application/x-www-form-urlencoded
+特点：
+- 其中的数据会被编码成以  **&** 分隔的键值对
+- 字符以**URL编码方式**编码
+如：
+```
+// 转换过程: {a: 1, b: 2} -> a=1&b=2 -> 如下(最终形式)
+"a%3D1%26b%3D2"
+```
+### multipart/fom-data
+- 请求头中的 **Content-Type** 字段会包含 **boundary**，且 **boundary** 的值有浏览器默认制度。例：** Content-Type:multipart/form-data;boundary=----WebkitFormBoundaryRRJKeWfHPGrS4LKe**.
+- 数据会被分成多个部分，每两个部分之间通过分隔符来分隔，每部分表述均有 HTTP 头部描述子包体，如 **Content-Type**，在最后的分隔符会加上**--**表示结束。
+相应的请求体是下面这样的：
+```
+Content-Disposition: form-data;name="data1";
+Content-Type: text/plain
+data1
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe
+Content-Disposition: form-data;name="data2";
+Content-Type: text/plain
+data2
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe--
+```
+### 小结
+值得一提的是，**multipart/form-data** 格式最大的特点在于:**每一个表单元素都是独立的资源表述**。另外，你可能在写业务的过程中，并没有注意到其中还有boundary的存在，如果你打开抓包工具，确实可以看到不同的表单元素被拆分开了，之所以在平时感觉不到，是以为浏览器和 HTTP 给你封装了这一系列操作。
+而且，在实际的场景中，对于图片等文件的上传，基本采用multipart/form-data而不用application/x-www-form-urlencoded，因为没有必要做 URL 编码，带来巨大耗时的同时也占用了更多的空间。
