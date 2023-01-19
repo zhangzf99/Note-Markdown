@@ -254,3 +254,295 @@ type status = 'success' | 'failure';
 ```
 
 ### 对象字面量类型
+类似的，对象字面量类型就是一个对象类型的值。当然，这也就意味着这个对象的值全都为字面量值：
+```ts
+interface Tmp2 {
+  obj: {
+    name: "zhangzf";
+    age: 18;
+  };
+}
+const tmp: Tmp2 = {
+  obj: {
+    name: "zhangzf",
+    age: 18,
+  },
+};
+
+```
+如果要实现一个对象字面量类型，意味着完全的实现这个类型每一个属性的每一个值。对象字面量类型在实际开发中的使用较少，我们只需要了解。
+总的来说，在需要更精确类型的情况下，我们可以使用字面量类型加上联合类型的方式，将类型从  string 这种宽泛的原始类型直接收窄到 ”resolved" | "pending" | "rejected" 这种精确地字面量类型集合。
+需要注意的是，无论是原始类型还是对象类型的字面量类型，它们的本质都是类型而不是值。它们在编译时同样会被擦除，同时也是被存储在内存中的类型空间而非值空间。
+如果说字面量类型是对原始类型的进一步扩展（对象字面量类型使用较少），那么枚举在某些方面则可以理解为是对对象类型的扩展。
+
+### 枚举
+```ts
+enum PageUrl {
+  Home_Page_Url = "url1",
+  Setting_Page_Url = "url2",
+  Share_Page_Url = "url3",
+}
+const home = PageUrl.Home_Page_Url;
+
+```
+这些常量被真正地**约束在一个命名空间**下。如果没有声明枚举的值，它会默认使用数字枚举，并且从0开始，以1递增。
+```ts
+enum Items {
+  Foo,
+  Bar,
+  Baz,
+}
+```
+在这个例子中，Items.Foo，Items.Bar，Items.Baz的值依次是0，1，2。
+
+如果你只为某一个成员指定了枚举值，那么之前未赋值成员仍然会使用从 0 递增的方式，之后的成员则会开始从枚举值递增。
+```ts
+enum Items1 {
+  // 0
+  Foo,
+  Bar = 599,
+  // 600
+  Baz,
+}
+```
+在数字枚举中，你可以使用延迟求值的枚举值，比如函数：
+```ts
+const returnNum = () => 100 + 499;
+enum Items2 {
+  Foo = returnNum(),
+  Bar = 599,
+  Baz,
+}
+
+```
+需要注意的是，延迟求值的枚举值是有条件的。**如果你使用了延迟求值，那么没有使用延迟求值的枚举成员必须放在使用常量枚举值声明的成员之后，或者放在第一位**
+```ts
+enum Items3 {
+  Baz,
+  Foo = returnNum(),
+  Bar = 599,
+}
+```
+ts中也可以同时使用字符串枚举值和数字枚举值：
+```ts
+enum Mixed {
+  Num = 599,
+  Str = "zhangzf",
+}
+```
+枚举和对象的重要差异在于，**对象是单向映射的**，我们只能从键映射到键值。而**枚举是双向映射的**，即你可以从枚举成员映射到枚举值，也可以从枚举值映射到枚举成员：
+```ts
+enum Items4 {
+  Foo,
+  Bar,
+  Baz,
+}
+const fooValue = Items4.Foo; // 0
+const fooKey = Items[0]; // 'Foo'
+```
+### 常量枚举
+常量枚举和枚举类似，只是其声明多了一个 const：
+```ts
+const enum Items5 {
+  Foo,
+  Bar,
+  Baz,
+}
+const fooValue1 = Items.Foo; // 0
+```
+它和普通枚举的差异主要在访问性与编译产物。对于常量枚举，你只能通过枚举成员访问枚举值（而不能通过值访问成员）。同时，在编译产物中并不会存在一个额外的辅助对象，对枚举成员的访问会被**直接内联替换为枚举的值**。
+
+## 函数与 Class 中的类型，详解函数重载与面向对象
+### 函数
+#### 函数的类型签名
+如果说变量的类型是描述了这个变量的值类型，那么函数的类型就是描述了**函数入参类型与函数返回值类型**，它们同样使用**:**的语法进行类型标注。
+```ts
+function foo(name: string): number {
+  return name.length;
+}
+```
+在函数类型中同样存在着类型推导。比如在这个例子中，可以不写返回值处的类型，它也能被正确推导为 number 类型。
+
+在js中，我们称**function name(){}**这一声明函数的方式为**函数声明**。除了函数声明外，我们还可以通过**函数表达式**，即**const foo = function(){}**的形式声明一个函数。在表达式中进行类型声明的方式是这样的：
+```ts
+const foo1 = function (name: string): number {
+  return name.length;
+};
+```
+我们也可以像对变量进行类型标注那样，对 foo 这个变量进行类型声明：
+```ts
+const foo2: (name: string) => number = function (name) {
+  return name.length;
+};
+```
+这里的**(name: string) => number**看起来眼熟，它是ES6的重要特性之一：箭头函数。但在这里，它其实是 ts 中的**函数类型签名**。而实际的箭头函数，我们的类型标注也是类似的：
+```ts
+const foo3 = (name: string): number => {
+  return name.length;
+};
+
+const foo4: (name: string) => number = (name) => {
+  return name.length;
+};
+
+type FucnFoo = (name: string) => number;
+const foo5: FucnFoo = (name) => {
+  return name.length;
+};
+```
+如果只是为了描述这个函数的类型结构，我们甚至可以使用 interface 来进行函数声明：
+```ts
+interface FuncFooStruct {
+  (name: string): number;
+}
+```
+### void 类型
+在ts中，一个没有返回值（即没有调用 return 语句）的函数，其返回类型应当被标记为 void 而不是 undefined，即使它实际的值是 undefined。
+```ts
+function foo6(): void {}
+function bar(): void {
+  return;
+}
+```
+原因和我们在原始类型与对象类型一节中讲到的：在ts中，undefined类型是一个实际的、有意义的类型值，而void才代表着空的、没有意义的类型值。因此在我们没有实际返回值时，使用void类型能更好地说明这个函数**没有进行返回操作**。但在上面的第二个例子中，其实更好的方式是使用 undefined：
+```ts
+function bar1(): undefined {
+  return;
+}
+```
+此时该函数表达的是，这个函数进行了返回操作，但没有返回实际的值。
+
+### 可选参数与 rest 参数
+在很多时候，我们会希望函数的参数可以更灵活，比如它不一定全部都必传，当你不传入参数时函数会使用此参数的默认值。正如在对象类型中我们使用**?**描述一个可选属性一样，在函数类型中我们也使用**?**描述一个可选参数：
+```ts
+// 在函数逻辑中注入可选参数默认值
+function foo7(name: string, age?: number): number {
+  const inputAge = age || 18;
+  return name.length + inputAge;
+}
+// 直接为可选参数声明默认值
+function foo8(name: string, age: number = 18): number {
+  const inputAge = age;
+  return name.length + inputAge;
+}
+```
+需要注意的是，**可选参数必须位于必选参数之后**。毕竟在js中函数的入参是按照位置（形参），而不是按照参数名（名参）进行传递。当然，我们也可以直接将可选参数与默认值合并，但此时就不能够使用**?**了，因为既然都有默认值，那肯定是可选参数了。
+
+对于 rest 参数的类型标注也比较简单，由于其实际上是一个数组，这里我们也应当使用数组类型进行标注：
+```ts
+function foo10(arg1: string, ...rest: any[]) {}
+
+// 使用元组类型进行标注
+function foo11(arg1: string, ...rest: [number, string]) {}
+```
+
+### 重载
+在某些逻辑较复杂的情况下，函数可能有多组入参类型和返回值类型：
+```ts
+function func(foo: number, bar?: boolean): string | number {
+  if (bar) {
+    return String(foo);
+  } else {
+    return foo * 10;
+  }
+}
+```
+在这个实例中，函数的返回类型基于其入参 bar 的值，并且从其内部逻辑中我们知道，当 bar 为 true，返回值为 string 类型，否则为 number 类型。而这里的类型签名完全没有体现这一点，我们只知道它的返回值是这么个联合类型。
+
+要想实现与入参关联的返回值类型，我们可以使用 ts 提供的**函数重载签名**，将以上的例子使用重载改写：
+```ts
+function func1(foo: number, bar: true): string;
+function func1(foo: number, bar?: false): number;
+function func1(foo: number, bar?: boolean): string | number {
+  if (bar) {
+    return String(foo);
+  } else {
+    return foo * 599;
+  }
+}
+const res1 = func(599); // number
+const res2 = func(599, true); // string
+const res3 = func(599, false); // number
+```
+这里我们的三个 function func1 其实具有不同的意义：
+- function func(foo: number, bar: true): string，重载签名一，传入 bar 的值为 true 时，函数返回值为 string 类型。
+- function func(foo: number, bar?: false): number，重载签名二，不传入 bar，或传入 bar 的值为 false 时，函数返回值为 number 类型。
+- function func(foo: number, bar?: boolean): string | number，函数的实现签名，会包含重载签名的所有可能情况。
+
+基于重载签名，我们就实现了将入参类型和返回值类型的可能情况进行关联，获得了更精确的类型标注能力。
+
+**注意**：拥有多个重载声明的函数再被调用时，是按照重载的什么顺序往下查找的。因此在第一个重载声明中，为了与逻辑中保持一致，即在 bar 为 true 时返回 string 类型，这里我们需要将第一个重载声明的 bar 声明为必选的字面量类型。
+
+
+### 异步函数、Generator 函数等类型签名
+```ts
+async function asyncFunc(): Promise<void> {}
+function* genFunc(): Iterable<void> {}
+async function* asyncGenFunc(): AsyncIterable<void> {}
+```
+
+### Class
+```ts
+class Foo {
+  prop: string;
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+
+  print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`);
+  }
+
+  get propA(): string {
+    return `${this.prop}+A`;
+  }
+
+  set propA(value: string) {
+    this.prop = `${value}+A`;
+  }
+}
+```
+**注意**：setter 方法不允许进行返回值的类型标注，可以理解为 setter 的返回值并不会被消费，它是一个只关注过程的函数。类的方法同样可以进行函数那样的重载，且语法基本一致。
+
+就像函数可以通过**函数声明**与**函数表达式**创建一样，类也可以通过**类声明**和**类表达式**的方式创建。
+```ts
+const Foo1 = class {
+  prop: string;
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+  print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`);
+  }
+};
+```
+
+### 修饰符
+在ts中我们能够为 Class 成员添加这些修饰符: **public / private / protected / readonly**。除了 readonly 以外，其他都是属于访问性修饰符，而 readonly 属于操作性修饰符 （就和 interface 中的 readonly 意义一致）。
+这些修饰符应用的位置在成员命名前：
+```ts
+class Foo {
+  private prop: string;
+
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+
+  protected print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`)
+  }
+
+  public get propA(): string {
+    return `${this.prop}+A`;
+  }
+
+  public set propA(value: string) {
+    this.propA = `${value}+A`
+  }
+}
+```
+- public：此类成员在 **类、类的实例、子类** 中都能被访问。
+- private：此类成员仅能在**类的内部**被访问。
+- protected：此类成员仅能在**类与子类中**被访问，你可以将类和类的实例当做两种概念，即一旦实例化完毕，那就和类没有关系了，即**不允许再访问受保护的成员**。
+
+当你不显示使用访问性修饰符，成员的访问性默认会被标记为public。实际上，在上面的例子中，我们通过构造函数为类成员赋值的方式还是略显麻烦，需要声明类属性以及在构造函数中进行赋值。简单起见，我们可以**在构造函数中对参数应用访问性修饰符**。

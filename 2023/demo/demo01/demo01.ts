@@ -88,18 +88,216 @@ interface Tmp {
   mixed: true | string | 599 | {} | (() => {}) | (1 | 2);
 }
 
-interface Tmp1 {
-  user:
-    | {
-        vip: true;
-        expires: string;
-      }
-    | {
-        vip: false;
-        promotion: string;
-      };
+// interface Tmp1 {
+//   user:
+//     | {
+//         vip: true;
+//         expires: string;
+//       }
+//     | {
+//         vip: false;
+//         promotion: string;
+//       };
+// }
+// declare var tmp: Tmp1;
+// if (tmp.user.vip) {
+//   console.log(tmp.user.expires);
+// }
+
+interface Tmp2 {
+  obj: {
+    name: "zhangzf";
+    age: 18;
+  };
 }
-declare var tmp: Tmp1;
-if (tmp.user.vip) {
-  console.log(tmp.user.expires);
+const tmp: Tmp2 = {
+  obj: {
+    name: "zhangzf",
+    age: 18,
+  },
+};
+
+enum PageUrl {
+  Home_Page_Url = "url1",
+  Setting_Page_Url = "url2",
+  Share_Page_Url = "url3",
 }
+const home = PageUrl.Home_Page_Url;
+
+enum Items {
+  Foo,
+  Bar,
+  Baz,
+}
+
+enum Items1 {
+  // 0
+  Foo,
+  Bar = 599,
+  // 600
+  Baz,
+}
+
+const returnNum = () => 100 + 499;
+enum Items2 {
+  Foo = returnNum(),
+  Bar = 599,
+  Baz,
+}
+
+enum Items3 {
+  Baz,
+  Foo = returnNum(),
+  Bar = 599,
+}
+
+enum Mixed {
+  Num = 599,
+  Str = "zhangzf",
+}
+
+enum Items4 {
+  Foo,
+  Bar,
+  Baz,
+}
+const fooValue = Items4.Foo; // 0
+const fooKey = Items[0]; // 'Foo'
+
+const enum Items5 {
+  Foo,
+  Bar,
+  Baz,
+}
+const fooValue1 = Items.Foo; // 0
+
+function foo(name: string): number {
+  return name.length;
+}
+
+const foo1 = function (name: string): number {
+  return name.length;
+};
+
+const foo2: (name: string) => number = function (name) {
+  return name.length;
+};
+
+const foo3 = (name: string): number => {
+  return name.length;
+};
+
+const foo4: (name: string) => number = (name) => {
+  return name.length;
+};
+
+type FucnFoo = (name: string) => number;
+const foo5: FucnFoo = (name) => {
+  return name.length;
+};
+
+interface FuncFooStruct {
+  (name: string): number;
+}
+
+function foo6(): void {}
+function bar(): void {
+  return;
+}
+
+function bar1(): undefined {
+  return;
+}
+
+// 在函数逻辑中注入可选参数默认值
+function foo7(name: string, age?: number): number {
+  const inputAge = age || 18;
+  return name.length + inputAge;
+}
+// 直接为可选参数声明默认值
+function foo8(name: string, age: number = 18): number {
+  const inputAge = age;
+  return name.length + inputAge;
+}
+
+function foo9(name: string, age: number = 18): number {
+  const inputAge = age || 18;
+  return name.length + inputAge;
+}
+
+function foo10(arg1: string, ...rest: any[]) {}
+
+function foo11(arg1: string, ...rest: [number, string]) {}
+
+function func(foo: number, bar?: boolean): string | number {
+  if (bar) {
+    return String(foo);
+  } else {
+    return foo * 10;
+  }
+}
+
+// function func1(foo: number, bar: true): string;
+// function func1(foo: number, bar?: false): number;
+// function func1(foo: number, bar?: boolean): string | number {
+//   if (bar) {
+//     return String(foo);
+//   } else {
+//     return foo * 599;
+//   }
+// }
+// const res1 = func(599); // number
+// const res2 = func(599, true); // string
+// const res3 = func(599, false); // number
+
+class Foo {
+  prop: string;
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+
+  print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`);
+  }
+
+  get propA(): string {
+    return `${this.prop}+A`;
+  }
+
+  set propA(value: string) {
+    this.prop = `${value}+A`;
+  }
+}
+
+const Foo1 = class {
+  prop: string;
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+  print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`);
+  }
+};
+
+class Foo3 {
+  private prop: string;
+  constructor(inputProp: string) {
+    this.prop = inputProp;
+  }
+  protected print(addon: string): void {
+    console.log(`${this.prop} and ${addon}`);
+  }
+
+  public get propA(): string {
+    return `${this.prop}+A`;
+  }
+
+  public set propA(value: string) {
+    this.propA = `${value}+A`;
+  }
+}
+
+class Foo4 {
+  constructor(public arg1: string, private arg2: boolean) {}
+}
+new Foo("zhangzf", true);
