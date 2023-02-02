@@ -300,4 +300,39 @@ class Foo3 {
 class Foo4 {
   constructor(public arg1: string, private arg2: boolean) {}
 }
-new Foo("zhangzf", true);
+new Foo4("zhangzf", true);
+
+class Foo5 {
+  constructor(public arg1: string, private arg2: boolean) {}
+}
+new Foo5("zhangzf", true);
+
+class Foo6 {
+  static staticHandle() {}
+  public instanceHandle() {}
+}
+
+class Base {
+  print() {}
+}
+class Derived extends Base {
+  print() {
+    super.print();
+  }
+}
+
+abstract class AbsFoo {
+  abstract absProp: string;
+  abstract get absGetter(): string;
+  abstract absMethod(name: string): string;
+}
+
+class Foo12 implements AbsFoo {
+  absProp: string = "zhangzf";
+  get absGetter() {
+    return "zhangzf";
+  }
+  absMethod(name: string): string {
+    return name;
+  }
+}
