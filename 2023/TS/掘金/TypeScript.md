@@ -739,3 +739,179 @@ class Foo12 implements AbsFoo {
 此时，我们必须完全实现这个抽象类的每一个抽象成员。需要注意的是，在 ts 中**无法声明静态的抽象成员**。
 
 对于抽象类，它的本质就是描述类的结构。看到结构，你是否又想到了 interface？是的，interface 不仅可以声明函数结构，也可以声明类的结构：
+
+```typescript
+interface FooStruct {
+  absProp: string;
+  get absGetter(): string;
+  absMethod(input: string): string;
+}
+class Foo7 implements FooStruct {
+  absProp: string = "linbudu";
+
+  get absGetter() {
+    return "linbudu";
+  }
+
+  absMethod(name: string) {
+    return name;
+  }
+}
+```
+
+在这里，使用类去实现了一个接口。这里接口的作用和抽象类一样，都是**描述这个类的结构**。
+
+## 探秘内置类型：any、unknown、never 与类型断言
+
+### any
+
+#### 使用 any 的场景
+
+- 如果是类型不兼容报错导致使用 any ，考虑使用类型断言替代。
+- 如果是类型太复杂导致使用 any ，考虑将这一处的类型去断言为你需要的最简类型。
+- 如果想要表达一个未知类型，可以使用 unknown。
+
+#### known
+
+unknown 类型和 any 类型有点类似，一个 unknown 类型的变量可以再次赋值为任意其他类型，但只能赋值给 any 与 unknown 类型的变量。
+
+```typescript
+let unknownVar: unknown = "linbudu";
+
+unknownVar = false;
+unknownVar = "linbudu";
+unknownVar = {
+  site: "juejin",
+};
+
+unknownVar = () => {};
+
+const val1: string = unknownVar; // Error
+const val2: number = unknownVar; // Error
+const val3: () => {} = unknownVar; // Error
+const val4: {} = unknownVar; // Error
+
+const val5: any = unknownVar;
+const val6: unknown = unknownVar;
+```
+
+unknown 和 any 的一个主要差异体现在赋值给别的变量时，any 放弃了所有的类型检查，而 unknown 没有。这一点也体现在对 unknown 类型的变量进行属性访问时：
+
+```typescript
+let unknownVar: unknown;
+unknownVar.foo(); // 报错：对象类型为 unknown
+```
+
+要对 unknown 类型进行属性访问，需要进行类型断言，即“虽然这是一个未知的类型，但是我跟你保证它在这里就是这个类型”。
+
+```typescript
+let unknownVar: unknown;
+(unknownVar as { foo: () => {} }).foo();
+```
+
+在类型未知的情况下，更推荐使用 unknown 标注。这相当于使用额外的心智负担保证了类型再各处的结构，后续重构为具体类型时也可以获得最初始的类型信息，同时还保证了类型检查的存在。
+
+### never
+
+```typescript
+type UnionWithNever = "linbudu" | 599 | true | void | never;
+```
+
+鼠标悬浮在类型别名上，会发现显示的类型时"linbudu" | 599 | true | void。
+never 类型被直接无视掉了，而 void 仍然存在。这是因为，void 作为类型表示一个空类型，就像没有返回值的函数使用 void 来作为返回值类型标注一样，void 类型就像 js 中的 null 一样代表“这里有类型，但是是个空类型”。
+
+而 never 才是一个“什么都没有”的类型，它甚至不包括空的类型，严格来说，**never 类型不携带任何的类型信息**，因此会在联合类型中被直接移除，比如我们看 void 和 never 的类型兼容性：
+
+```typescript
+declare let v1: never;
+declare let v2: void;
+v1 = v2; // X 类型void不能赋值给类型never
+v2 = v1;
+```
+
+在编程语言的类型系统中，never 类型被称为 Bottom Type，是**整个类型系统层级中最底层的类型**。和 null 和 undefined 一样，它是所有类型的子类型，但只有 never 类型的变量能够赋值给另一个 never 类型变量。
+
+通常我们不会显示的声明一个 never 类型，它主要被类型检查所使用。但在某些情况下使用 never 是符合逻辑的，比如一个只负责抛出错误的函数：
+
+```typescript
+function justThrow(): never {
+  throw new Error();
+}
+```
+
+### 类型断言：警告编译器不准报错
+
+类型断言能够显示告知类型检查程序当前这个变量的类型，可以进行类型分析的修正类型。它其实就是一个将变量的已有类型更改为新指定类型的操作，它的基本语法是 as NewType，你可以将 any/unknown 类型断言到一个具体的类型：
+
+```typescript
+let unknownVar: unknown;
+(unknownVar as { foo: () => {} }).foo();
+```
+
+还可以 as 到 any 来，跳过所有的类型检查：
+
+```typescript
+const str: string = "zhangzf";
+(str as any).func().foo().prop;
+```
+
+也可以在联合类型中断言一个具体的分支：
+
+```typescript
+function foo(union: string | number) {
+  if ((union as string).includes("linbudu")) {
+  }
+
+  if ((union as number).toFixed() === "599") {
+  }
+}
+```
+
+断言的正确使用方式，在 ts 类型分析不正确或不符合预期时，将其断言为此处的正确类型：
+
+```typescript
+interface IFoo {
+  name: string;
+}
+declare const obj: {
+  foo: IFoo;
+};
+const { foo = {} as IFoo } = obj;
+```
+
+这里从 {} 字面量类型断言为了 IFOO 类型，即为结构赋值默认值进行了预期的类型断言。当然，更严谨的方式应该是定义为 Partial<IFoo> 类型，即 IFoo 的属性均为可选。
+除了使用 as 语法以外，也可以使用 <> 语法。
+需要注意的是，类型断言应当是在迫不得已的情况下使用的。虽然说我们可以用类型断言纠正不正确的类型分析，但类型分析在大部分场景下还是可以满足我们的需求的。
+
+### 双重断言
+
+如果在使用类型断言时，原类型与断言类型之间差异过大，ts 会给一个类型报错。
+
+```typescript
+const str: string = "linbudu";
+
+(str as unknown as { handler: () => {} }).handler();
+
+// 使用尖括号断言
+(<{ handler: () => {} }>(<unknown>str)).handler();
+```
+
+这是因为断言类型和原类型的差异太大，需要先断言到一个通用的类，即 any/unknown。这一通用类型包含了所有可能的类型，因此**断言到它**和**从它断言到另一个类型**差异不大。
+
+### 非空断言
+
+## 类型编程好帮手： ts 类型工具（上）
+
+### 类型别名
+
+```typescript
+type A = string;
+```
+
+通过 type 关键字声明了一个类型别名 A，同时它的类型等价于 string 类型。类型别名的作用主要是对一组类型或一个特定类型结构进行封装，以便于在其他地方进行复用。
+
+比如抽离一组联合类型：
+
+```typescript
+
+```

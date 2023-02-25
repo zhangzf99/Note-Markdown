@@ -336,3 +336,30 @@ class Foo12 implements AbsFoo {
     return name;
   }
 }
+
+interface FooStruct {
+  absProp: string;
+  get absGetter(): string;
+  absMethod(input: string): string;
+}
+class Foo7 implements FooStruct {
+  absProp: string = "linbudu";
+
+  get absGetter() {
+    return "linbudu";
+  }
+
+  absMethod(name: string) {
+    return name;
+  }
+}
+
+// interface IFoo {
+//   name: string;
+// }
+// declare const obj: {
+//   foo: IFoo;
+// };
+// const { foo = {} as IFoo } = obj;
+
+type StatusCode = 200 | 301 | 400 | 500 | 502;

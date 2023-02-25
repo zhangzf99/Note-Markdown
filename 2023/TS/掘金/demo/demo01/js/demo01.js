@@ -208,4 +208,47 @@ class Foo4 {
         this.arg2 = arg2;
     }
 }
-new Foo("zhangzf", true);
+new Foo4("zhangzf", true);
+class Foo5 {
+    constructor(arg1, arg2) {
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+    }
+}
+new Foo5("zhangzf", true);
+class Foo6 {
+    static staticHandle() { }
+    instanceHandle() { }
+}
+class Base {
+    print() { }
+}
+class Derived extends Base {
+    print() {
+        super.print();
+    }
+}
+class AbsFoo {
+}
+class Foo12 {
+    constructor() {
+        this.absProp = "zhangzf";
+    }
+    get absGetter() {
+        return "zhangzf";
+    }
+    absMethod(name) {
+        return name;
+    }
+}
+class Foo7 {
+    constructor() {
+        this.absProp = "linbudu";
+    }
+    get absGetter() {
+        return "linbudu";
+    }
+    absMethod(name) {
+        return name;
+    }
+}
