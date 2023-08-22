@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>js最大并发数</title>
+  </head>
+  <body></body>
+  <script>
+    function getData(urls, maxCount) {
+      return new Promise((resolve) => {
+        // 如果请求的url长度为0， 直接resolve一个空数组
+        if (urls.length === 0) resolve([]);
+        let index = 0; // 记录下标移动位置
+        let results = []; // 存放所有返回结果
+        let cnt = 0;
+        let times = Math.min(urls.length, maxCount);
+        for (let i = 0; i < times; i++) {
+          request();
+        }
+        async function request() {
+          if (index === urls.length) return;
+          let i = index;
+          index++;
+          try {
+            let res = await fetch(urls[i]);
+            results[i] = res;
+          } catch (error) {
+            results[i] = error;
+          } finally {
+            console.log("results[i]", results);
+            cnt++;
+            if (urls.length === cnt) {
+              resolve(results);
+              return;
+            }
+            request();
+          }
+        }
+      });
+    }
+    let urls = [];
+
+    for (let i = 1; i <= 20; i++) {
+      urls.push(`https://jsonplaceholder.typicode.com/todos/${i}`);
+    }
+    let maxCount = 3;
+    getData(urls, maxCount).then((res) => {
+      console.log("res==", res);
+    });
+  </script>
+</html>

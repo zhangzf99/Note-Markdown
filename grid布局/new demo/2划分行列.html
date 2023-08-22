@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding: 200px;
+      }
+
+      article {
+        width: 400px;
+        height: 200px;
+        border: solid 5px silver;
+        /* display: grid; */
+        display: grid;
+        /* 固定宽度 */
+        grid-template-rows: 100px 100px;
+        grid-template-columns: 100px 100px 100px 100px;
+        /* 百分比 */
+        /* grid-template-rows: 50% 50%;
+        grid-template-columns: 25% 25% 25% 25%; */
+        /* 重复设置 */
+        /* grid-template-rows: repeat(2, 50%);
+        grid-template-columns: repeat(4, 25%); */
+        /* 重复设置-重复排列 */
+        /* grid-template-rows: repeat(2, 50%);
+        grid-template-columns: repeat(2, 100px 50px); */
+        /* 自动填充 */
+        /* grid-template-rows: repeat(auto-fill, 100px);
+        grid-template-columns: repeat(auto-fill, 25%); */
+        /* 比例划分 */
+        /* grid-template-rows: 1fr 2fr;
+        grid-template-columns: 200px 1fr 2fr 1fr; */
+        /* 比例划分-重复定义 */
+        /* grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr 2fr); */
+        /* 自动空间 */
+        /* grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: 100px auto 30px auto; */
+        /* 组合定义 */
+        /* grid-template: repeat(2, 100px) / repeat(4, 75px); */
+        /* grid-template: 30px auto/ 30px 1fr 100px 2fr; */
+        /* minmax */
+        /* grid-template-rows: 30px minmax(50px, 100px);
+        grid-template-columns: repeat(4, minmax(50px, 150px)); */
+      }
+
+      article div {
+        background: blueviolet;
+        background-clip: content-box;
+        padding: 10px;
+        border: solid 1px #ddd;
+      }
+      /* 组合定义 */
+      /* div:nth-child(2) {
+        grid-area: 2/2/3/3;
+      } */
+    </style>
+  </head>
+  <body>
+    <article>
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>7</div>
+      <div>8</div>
+    </article>
+  </body>
+</html>

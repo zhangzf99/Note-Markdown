@@ -1,0 +1,99 @@
+<!--
+ * @Author: 15755737112 1147131132@qq.com
+ * @Date: 2023-07-30 22:10:31
+ * @LastEditors: 15755737112 1147131132@qq.com
+ * @LastEditTime: 2023-07-30 22:27:19
+ * @FilePath: \new demo\5元素定位.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding: 200px;
+      }
+
+      article {
+        width: 400px;
+        height: 200px;
+        box-sizing: border-box;
+        border: solid 5px silver;
+        display: grid;
+        /* 根据栅格线 */
+        /* grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr 2fr); */
+        /* 根据栅格命名 */
+        /* grid-template-rows: [r1-start] 100px [r1-end r2-start] 100px [r2-end r3-start] 100px [r3-end];
+        grid-template-columns: [c1-start] 100px [c1-end c2-start] 100px [c2-end c3-start] 100px [c3-end c4-start] 100px [c4-end]; */
+        /* 根据自动命名 */
+        /* grid-template-rows: repeat(3, [r-start] 100px [r-end]);
+        grid-template-columns: repeat(4, [c-start] 100px [c-end]); */
+        /* 根据偏移量 */
+        /* grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr); */
+        /* 简写模式 */
+        /* grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr); */
+        /* grid-area */
+        grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+      }
+
+      article div {
+        background: blueviolet;
+        background-clip: content-box;
+        padding: 10px;
+        border: solid 1px #ddd;
+      }
+      div:nth-child(1) {
+        /* 根据栅格线 */
+        /* grid-row-start: 2;
+        grid-row-end: 3;
+        grid-column-start: 2;
+        grid-column-end: 4; */
+        /* 根据栅格命名 */
+        /* grid-row-start: r1-end;
+        grid-column-start: c2-start;
+        grid-row-end: r2-end;
+        grid-column-end: c4-start; */
+        /* 根据自动命名 */
+        /* grid-row-start: r-start 2;
+        grid-column-start: c-start 2;
+        grid-row-end: r-start 3;
+        grid-column-end: c-start 4; */
+        /* 根据偏移量 */
+        /* grid-row-start: 2;
+        grid-column-start: 2;
+        grid-row-end: span 1;
+        grid-column-end: span 2; */
+        /* 简写模式 */
+        /* grid-row: 2/3;
+        grid-column: 2/4; */
+        /* grid-row: 2 / span 1;
+        grid-column: 2 / span 2; */
+        /* grid-area */
+        /* grid-area: 2/2/3/4; */
+      }
+    </style>
+  </head>
+  <body>
+    <article>
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>7</div>
+      <!-- <div>8</div> -->
+    </article>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!--
+ * @Author: 15755737112 1147131132@qq.com
+ * @Date: 2023-07-30 22:10:31
+ * @LastEditors: 15755737112 1147131132@qq.com
+ * @LastEditTime: 2023-07-30 22:33:00
+ * @FilePath: \new demo\5元素定位.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding: 100px;
+      }
+
+      article {
+        width: 400px;
+        height: 600px;
+        box-sizing: border-box;
+        border: solid 5px silver;
+        display: grid;
+        /* 区域布局 */
+        /* grid-template-rows: 80px 1fr 50px;
+        grid-template-columns: 100px 1fr 60px;
+        grid-template-areas:
+          "header header  header"
+          "nav main  aside"
+          "footer footer  footer"; */
+        /* 简写形式 */
+        /* grid-template:
+          "header header header" 80px
+          "nav main aside" auto
+          "footer footer footer" 50px/100px auto 50px; */
+        /* 区域占位 */
+        grid-template:
+          "header header ." 80px
+          "nav main aside" auto
+          "footer footer footer" 50px/100px auto 50px;
+      }
+
+      main {
+        grid-area: main;
+        background: #e9eeef;
+      }
+
+      header {
+        background: #2ec56c;
+        grid-area: header;
+      }
+
+      nav {
+        background: #e1732c;
+        grid-area: nav;
+      }
+
+      aside {
+        grid-area: aside;
+        background: #eebc31;
+      }
+
+      footer {
+        grid-area: footer;
+        background: #904fa9;
+      }
+    </style>
+  </head>
+  <body>
+    <article>
+      <header></header>
+      <nav></nav>
+      <main></main>
+      <aside></aside>
+      <footer></footer>
+    </article>
+  </body>
+</html>

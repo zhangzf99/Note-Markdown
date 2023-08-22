@@ -1,0 +1,65 @@
+<!--
+ * @Author: 15755737112 1147131132@qq.com
+ * @Date: 2023-07-30 22:10:31
+ * @LastEditors: 15755737112 1147131132@qq.com
+ * @LastEditTime: 2023-07-30 22:52:01
+ * @FilePath: \new demo\5元素定位.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        padding: 200px;
+      }
+
+      article {
+        width: 400px;
+        height: 200px;
+        box-sizing: border-box;
+        border: solid 5px silver;
+        display: grid;
+        grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+        /* 按列排序 */
+        /* grid-auto-flow: column; */
+        /* 按行排序 */
+        /* grid-auto-flow: row; */
+        /* 元素前面使用空余栅格 */
+        /* grid-auto-flow: row dense; */
+      }
+
+      article div {
+        background: blueviolet;
+        background-clip: content-box;
+        padding: 10px;
+        border: solid 1px #ddd;
+      }
+      /* 元素前使用空余空格 */
+      /* article div:nth-child(1) {
+        grid-column: 1 / span 2;
+        background: #000;
+      }
+
+      article div:nth-child(2) {
+        grid-column: 2 / span 1;
+      } */
+    </style>
+  </head>
+  <body>
+    <article>
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+    </article>
+  </body>
+</html>
