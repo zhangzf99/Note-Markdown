@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ES新特性.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h3 id="es7-%E6%96%B0%E7%89%B9%E6%80%A7">ES7 新特性</h3>
+<h4 id="arrayprototypeincludes%E6%96%B9%E6%B3%95">Array.prototype.includes()方法</h4>
+<p>在 ES6 中我们有 String.prototype.includes() 可以查询给定字符串是否包含一个字符，而在 ES7 中，我们在数组中也可以使用 Array.prototype.includes() 方法来判断一个数组是否包含一个给定的值，根据情况，如果包含则返回 true，否则返回 false。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-string">"9"</span>, <span class="hljs-literal">NaN</span>, <span class="hljs-number">-0</span>];
+arr.includes(<span class="hljs-number">1</span>); <span class="hljs-comment">// true</span>
+arr.includes(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// false 该方法的第二个参数表示搜索的其实位置，默认为0</span>
+arr.includes(<span class="hljs-string">"1"</span>); <span class="hljs-comment">// false</span>
+arr.includes(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// true</span>
+arr.includes(+<span class="hljs-number">0</span>); <span class="hljs-comment">// true</span>
+</div></code></pre>
+<p>除此之外，还可以使用 indexOf()、find()和 findIndex()
+indexOf()方法返回在数组中可以找到一个给定元素的第一个索引，如果不存在，则返回-1。注意，这三个方法内部使用严格相等运算符(===)进行判断，这会导致对 NaN 的误判。</p>
+<pre class="hljs"><code><div>[<span class="hljs-literal">NaN</span>].indexOf(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// -1</span>
+
+[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">-5</span>, <span class="hljs-number">10</span>].find(<span class="hljs-function">(<span class="hljs-params">n</span>) =&gt;</span> n &lt; <span class="hljs-number">0</span>); <span class="hljs-comment">// -5</span>
+[<span class="hljs-number">1</span>, <span class="hljs-number">5</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>].findIndex(<span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> value &gt; <span class="hljs-number">9</span>;
+}); <span class="hljs-comment">// 2</span>
+[<span class="hljs-literal">NaN</span>].findIndex(<span class="hljs-function">(<span class="hljs-params">y</span>) =&gt;</span> <span class="hljs-built_in">Object</span>.is(<span class="hljs-literal">NaN</span>, y)); <span class="hljs-comment">// 0</span>
+</div></code></pre>
+<h4 id="%E6%B1%82%E5%B9%82%E8%BF%90%E7%AE%97%E7%AC%A6">求幂运算符</h4>
+<p>在 ES7 中引入了指数运算符，具有与 Math.pow() 等效的计算结果</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">console</span>.log(<span class="hljs-number">2</span> ** <span class="hljs-number">10</span>); <span class="hljs-comment">// 1024</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// 1024</span>
+</div></code></pre>
+<h3 id="es8-%E6%96%B0%E7%89%B9%E6%80%A7">ES8 新特性</h3>
+<h4 id="async--await">Async / Await</h4>
+<p>async 是一个通过异步执行并隐式返回 Promise 作为结果的函数。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"111"</span>;
+}
+foo().then(<span class="hljs-function">(<span class="hljs-params">val</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(val); <span class="hljs-comment">// '111'</span>
+});
+</div></code></pre>
+<p>上述代码，可以看到调用 async 声明的 foo 函数返回了一个 Promise 对象，等价于下面代码：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">"111"</span>);
+}
+foo().then(<span class="hljs-function">(<span class="hljs-params">val</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(val); <span class="hljs-comment">// '111'</span>
+});
+</div></code></pre>
+<h4 id="objectvaluesobjectentries">Object.values()，Object.entries()</h4>
+<p>ES5 引入了 Object.keys 方法，返回一个数组，成员是参数对象自身的(不含继承的)所有可遍历属性的键名。ES8 引入了跟 Object.keys 配套的 Object.values 和 Object.entries，作为一个对象的补充手段，供 for...of 循环使用。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">foo</span>: <span class="hljs-string">"bar"</span>, <span class="hljs-attr">baz</span>: <span class="hljs-number">42</span> };
+<span class="hljs-built_in">Object</span>.values(obj); <span class="hljs-comment">// ["bar", 42]</span>
+<span class="hljs-keyword">const</span> obj = { <span class="hljs-number">100</span>: <span class="hljs-string">"a"</span>, <span class="hljs-number">2</span>: <span class="hljs-string">"b"</span>, <span class="hljs-number">7</span>: <span class="hljs-string">"c"</span> };
+<span class="hljs-built_in">Object</span>.values(obj); <span class="hljs-comment">// ["b", "c", "a"]</span>
+</div></code></pre>
+<p>注意：如果属性名为数值的属性，是按照数值大小，从小到大遍历的，因此返回的顺序是 b、c、a。
+Object.entries() 方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历属性的键值对数组。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">foo</span>: <span class="hljs-string">"bar"</span>, <span class="hljs-attr">baz</span>: <span class="hljs-number">42</span> };
+<span class="hljs-built_in">Object</span>.entries(obj); <span class="hljs-comment">// [['foo','bar'],['baz', 42]]</span>
+<span class="hljs-keyword">const</span> obj = { <span class="hljs-number">10</span>: <span class="hljs-string">"xxx"</span>, <span class="hljs-number">1</span>: <span class="hljs-string">"yyy"</span>, <span class="hljs-number">3</span>: <span class="hljs-string">"zzz"</span> };
+<span class="hljs-built_in">Object</span>.entries(obj); <span class="hljs-comment">// [['1','yyy'],[3,'zzz'],['10','xxx']]</span>
+</div></code></pre>
+<h4 id="string-padding">String padding</h4>
+<p>String 新增了两个实例函数 String.prototype.padStart 和 String.prototype.padEnd，允许将空字符串或其他字符串添加到原始字符串的开头或结尾。</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">String</span>.padStart(targetLength, [padString]);
+</div></code></pre>
+<p>targetLength(必填)：当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
+padString(可选)：填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数缺省值为&quot;&quot;。</p>
+<pre class="hljs"><code><div><span class="hljs-string">"x"</span>.padStart(<span class="hljs-number">4</span>, <span class="hljs-string">"ab"</span>); <span class="hljs-comment">// 'abax'</span>
+<span class="hljs-string">"x"</span>.padEnd(<span class="hljs-number">5</span>, <span class="hljs-string">"ab"</span>); <span class="hljs-comment">// 'xabab'</span>
+</div></code></pre>
+<p>有时候我们处理日期、金额的时候经常要格式化，这个特性就派上了用场：</p>
+<pre class="hljs"><code><div><span class="hljs-string">"12"</span>.padStart(<span class="hljs-number">10</span>, <span class="hljs-string">"YYYY-MM-DD"</span>); <span class="hljs-comment">// "YYYY-MM-12"</span>
+<span class="hljs-string">"09-12"</span>.padStart(<span class="hljs-number">10</span>, <span class="hljs-string">"YYYY-MM-DD"</span>); <span class="hljs-comment">// "YYYY-09-12"</span>
+</div></code></pre>
+<h4 id="objectgetownpropertydescriptors">Object.getOwnPropertyDescriptors()</h4>
+<p>ES5 的 Object.getOwnPropertyDescriptor() 方法会返回某个对象属性的描述对象(descriptor)。ES8 引入了 Object.getOwnPropertyDescriptors() 方法，返回指定对象所有自身属性(非继承属性)的描述对象。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">"浪里行舟"</span>,
+  <span class="hljs-keyword">get</span> bar() {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"abc"</span>;
+  },
+};
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.getOwnPropertyDescriptors(obj));
+</div></code></pre>
+<p><img src="企业微信截图_16927710958465.png" alt="企业微信截图_16927710958465">
+该方法的引入目的，主要是为了解决 Object.assign() 无法正确拷贝 get 属性和 set 属性的问题。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> source = {
+  <span class="hljs-keyword">set</span> foo(value) {
+    <span class="hljs-built_in">console</span>.log(value);
+  },
+  <span class="hljs-keyword">get</span> bar() {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"浪里行舟"</span>;
+  },
+};
+<span class="hljs-keyword">const</span> target1 = {};
+<span class="hljs-built_in">Object</span>.assign(target1, source);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.getOwnPropertyDescriptor(target1, <span class="hljs-string">"foo"</span>));
+</div></code></pre>
+<p><img src="企业微信截图_1692771542429.png" alt="企业微信截图_1692771542429"></p>
+<p>上面代码中，source 对象的 foo 属性的值是一个赋值函数，Object.assign 方法将这个属性拷贝给 target1 对象，结果该属性的值变成了 undefined。<strong>这是因为 Object.assign 方法总是拷贝一个属性的值，而不会拷贝它背后的赋值方法或取值方法</strong>。
+这时，Object.getOwnPropertyDescriptors() 方法配合 Object.defineProperties()方法，就可以实现正确的拷贝。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> source = {
+  <span class="hljs-keyword">set</span> foo(value) {
+    <span class="hljs-built_in">console</span>.log(value);
+  },
+  <span class="hljs-keyword">get</span> bar() {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"浪里行舟"</span>;
+  },
+};
+<span class="hljs-keyword">const</span> target2 = {};
+<span class="hljs-built_in">Object</span>.defineProperties(target2, <span class="hljs-built_in">Object</span>.getOwnPropertyDescriptors(source));
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.getOwnPropertyDescriptor(target2, <span class="hljs-string">"foo"</span>));
+</div></code></pre>
+<p><img src="企业微信截图_16927721233614.png" alt="企业微信截图_16927721233614"></p>
+<h3 id="es9-%E6%96%B0%E7%89%B9%E6%80%A7">ES9 新特性</h3>
+<h4 id="for-await-of">for await of</h4>
+<p>for of 方法能够遍历具有 Symbol.iterator 接口的同步迭代器数据，但是不能遍历异步迭代器。ES9 新增的 for await of 可以用来遍历具有 Symbol.asyncIterator 方法的数据结构，也就是异步迭代器，且会等待前一个成员的状态改变后才会遍历到下一个成员，相当于 async 函数内部的 await。</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// for of遍历</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Gen</span>(<span class="hljs-params">time</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resolve, reject</span>) </span>{
+    setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      resolve(time);
+    }, time);
+  });
+}
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">test</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> arr = [Gen(<span class="hljs-number">2000</span>), Gen(<span class="hljs-number">100</span>), Gen(<span class="hljs-number">3000</span>)];
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> item <span class="hljs-keyword">of</span> arr) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Date</span>.now(), item.then(<span class="hljs-built_in">console</span>.log));
+  }
+}
+test();
+</div></code></pre>
+<p><img src="企业微信截图_16927733377658.png" alt="企业微信截图_16927733377658"></p>
+<p>上述代码证实了 for of 方法不能遍历异步迭代器，得到的结果并不是我们所期待的，于是 for await of 就出现了。</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Gen</span>(<span class="hljs-params">time</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resolve, reject</span>) </span>{
+    setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      resolve(time);
+    }, time);
+  });
+}
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">test</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> arr = [Gen(<span class="hljs-number">2000</span>), Gen(<span class="hljs-number">100</span>), Gen(<span class="hljs-number">3000</span>)];
+  <span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">let</span> item <span class="hljs-keyword">of</span> arr) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Date</span>.now(), item);
+  }
+}
+test();
+<span class="hljs-comment">// 1575536194608 2000</span>
+<span class="hljs-comment">// 1575536194608 100</span>
+<span class="hljs-comment">// 1575536195608 3000</span>
+</div></code></pre>
+<p>使用 for await of 遍历时，会等待前一个 Promise 对象的状态改变后，再遍历到下一个成员。</p>
+<h3 id="es10-%E6%96%B0%E7%89%B9%E6%80%A7">ES10 新特性</h3>
+<h4 id="arrayprototypeflat">Array.prototype.flat()</h4>
+<p>多维数组时一种常见的数据格式，特别是在进行数据检索的时候。将多维数组打平是常见的需求。
+flat() 方法会按照一个可指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素合并为一个新数组返回。</p>
+<pre class="hljs"><code><div>newArray = arr.flat(depth); <span class="hljs-comment">// depth是指要提取嵌套数组的结构深度，默认值为1</span>
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> numbers1 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, [<span class="hljs-number">5</span>, <span class="hljs-number">6</span>]]];
+<span class="hljs-built_in">console</span>.log(numbers1.flat()); <span class="hljs-comment">// [1, 2, 3, 4, [5, 6]]</span>
+<span class="hljs-keyword">const</span> numbers2 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, [<span class="hljs-number">5</span>, <span class="hljs-number">6</span>]]];
+<span class="hljs-built_in">console</span>.log(numbers2.flat(<span class="hljs-number">2</span>)); <span class="hljs-comment">// [1, 2, 3, 4, 5, 6]</span>
+</div></code></pre>
+<h4 id="arrayprototypeflatmap">Array.prototype.flatMap()</h4>
+<p>flatMap() 方法首先使用映射函数映射每个元素，然后将结果压缩成一个新数组。从方法的名字也可以看出来包含两部分功能一个是 map，一个是 flat(深度为 1)。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">let</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
+<span class="hljs-built_in">console</span>.log(arr.map(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> [item * <span class="hljs-number">2</span>]).flat()); <span class="hljs-comment">// [2, 4, 6]</span>
+<span class="hljs-built_in">console</span>.log(arr.flatMap(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> [item * <span class="hljs-number">2</span>])); <span class="hljs-comment">// [2, 4, 6]</span>
+</div></code></pre>
+<p>实际上，flatMap 是综合了 map 和 flat 的操作，所以它只能打平一层。</p>
+<h4 id="objectfromentries">Object.fromEntries()</h4>
+<p>Object.fromEntries 这个新的 API 实现了与 Object.entries 相反的操作。这使得根据对象的 entries 很容易得到 object。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> object = { <span class="hljs-attr">x</span>: <span class="hljs-number">23</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">24</span> };
+<span class="hljs-keyword">const</span> entries = <span class="hljs-built_in">Object</span>.entries(object); <span class="hljs-comment">// [['x', 23], ['y', 24]]</span>
+<span class="hljs-keyword">const</span> result = <span class="hljs-built_in">Object</span>.fromEntries(entries); <span class="hljs-comment">// { x: 23, y: 24 }</span>
+</div></code></pre>
+<p>ES2017 引入了 Object.entries，这个方法可以将对象转换为数组，这样对象就可以使用数组原型中的众多内置方法，比如 map、filter、reduce，举个栗子，我们想提取下列对象 obj 中所有 value 大于 21 的键值对，如何操作呢？</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// ES10之前</span>
+<span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">a</span>: <span class="hljs-number">21</span>,
+  <span class="hljs-attr">b</span>: <span class="hljs-number">22</span>,
+  <span class="hljs-attr">c</span>: <span class="hljs-number">23</span>,
+};
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.entries(obj)); <span class="hljs-comment">// [['a',21],["b", 22],["c", 23]]</span>
+<span class="hljs-keyword">let</span> arr = <span class="hljs-built_in">Object</span>.entries(obj).filter(<span class="hljs-function">(<span class="hljs-params">[a, b]</span>) =&gt;</span> b &gt; <span class="hljs-number">21</span>); <span class="hljs-comment">// [["b", 22],["c", 23]]</span>
+<span class="hljs-keyword">let</span> obj1 = {};
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> [name, age] <span class="hljs-keyword">of</span> arr) {
+  obj1[name] = age;
+}
+<span class="hljs-built_in">console</span>.log(obj1); <span class="hljs-comment">// {b: 22, c: 23}</span>
+</div></code></pre>
+<p>上例中得到了数组 arr，想再次转换为对象，就需要手动写一些代码来处理，但是有了 Object.fromEntries() 就很容易实现。</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// 用Object.fromEntries()来实现</span>
+<span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">a</span>: <span class="hljs-number">21</span>,
+  <span class="hljs-attr">b</span>: <span class="hljs-number">22</span>,
+  <span class="hljs-attr">c</span>: <span class="hljs-number">23</span>,
+};
+<span class="hljs-keyword">let</span> res = <span class="hljs-built_in">Object</span>.fromEntries(<span class="hljs-built_in">Object</span>.entries(obj).filter(<span class="hljs-function">(<span class="hljs-params">[a, b]</span>) =&gt;</span> b &gt; <span class="hljs-number">21</span>));
+<span class="hljs-built_in">console</span>.log(<span class="hljs-number">111</span>, res); <span class="hljs-comment">// {b: 22, c: 23}</span>
+</div></code></pre>
+<h4 id="stringtrimstart-%E5%92%8C-stringtrimend">String.trimStart 和 String.trimEnd</h4>
+<p>移除开头和结尾的空格，之前我们用正则表达式来实现，现在 ES10 新增了两个新特性，让这变得更简单！
+trimStart() 方法从字符串的开头删除空格，trimLeft()是此方法的别名。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">let</span> str = <span class="hljs-string">" 前端工匠 "</span>;
+<span class="hljs-built_in">console</span>.log(str.length); <span class="hljs-comment">// 6</span>
+str = str.trimStart();
+<span class="hljs-built_in">console</span>.log(str.length); <span class="hljs-comment">// 5</span>
+<span class="hljs-keyword">let</span> str1 = str.trim(); <span class="hljs-comment">// 清除前后的空格</span>
+<span class="hljs-built_in">console</span>.log(str1.length); <span class="hljs-comment">// 4</span>
+str.replace(<span class="hljs-regexp">/^\s+/g</span>, <span class="hljs-string">""</span>); <span class="hljs-comment">// 也可以用正则实现开头删除空格</span>
+</div></code></pre>
+<p>trimEnd() 方法从一个字符串的右端移除空白字符，trimRight 是 trimEnd 的别名。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">let</span> str = <span class="hljs-string">" 浪里行舟 "</span>;
+<span class="hljs-built_in">console</span>.log(str.length); <span class="hljs-comment">// 6</span>
+str = str.trimEnd();
+<span class="hljs-built_in">console</span>.log(str.length); <span class="hljs-comment">// 5</span>
+<span class="hljs-keyword">let</span> str1 = str.trim(); <span class="hljs-comment">//清除前后的空格</span>
+<span class="hljs-built_in">console</span>.log(str1.length); <span class="hljs-comment">// 4</span>
+str.replace(<span class="hljs-regexp">/\s+$/g</span>, <span class="hljs-string">""</span>); <span class="hljs-comment">// 也可以用正则实现右端移除空白字符</span>
+</div></code></pre>
+<h4 id="bigint">BigInt</h4>
+<p>js 所有数字都保存为 64 位浮点数，这给数值的表示带来了两大限制。一是数值的精度只能到 53 个二进制位，大于这个范围的整数，js 是无法精确表示的。二是大于或等于 2 的 1024 次方的数值，js 无法表示，会返回 Infinity。</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// 超过 53 个二进制位的数值，无法保持精度</span>
+<span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">53</span>) === <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">53</span>) + <span class="hljs-number">1</span>; <span class="hljs-comment">// true</span>
+<span class="hljs-comment">// 超过 2 的 1024 次方的数值，无法表示</span>
+<span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">1024</span>); <span class="hljs-comment">// Infinity</span>
+</div></code></pre>
+<p>现在 ES10 引入了一种新的数据类型 BigInt（大整数），来解决这个问题。BigInt 只用来表示整数，没有位数的限制，任何位数的整数都可以精确表示。
+创建 BigInt 类型的值也非常简单，只需要在数字后面加上 n 即可。例如，123 变为 123n。也可以使用全局方法 BigInt(value) 转化，入参 value 为数字或数字字符串。</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> aNumber = <span class="hljs-number">111</span>;
+<span class="hljs-keyword">const</span> aBigInt = BigInt(aNumber);
+aBigInt === <span class="hljs-number">111n</span>; <span class="hljs-comment">// true</span>
+<span class="hljs-keyword">typeof</span> aBigInt === <span class="hljs-string">"bigint"</span>; <span class="hljs-comment">// true</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-number">111</span>; <span class="hljs-comment">// "number"</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-number">111n</span>; <span class="hljs-comment">// "bigint"</span>
+</div></code></pre>
+<p>如果算上 BigInt，JavaScript 中原始类型就从 6 个变为了 7 个。</p>
+<h4 id="functionprototypetostring">Function.prototype.toString()</h4>
+<p>ES2019 中，Function.toString()发生了变化。之前执行这个方法时，得到的字符串是去空白符号的。而现在，得到的字符串呈现出原本源码的样子：</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">a, b</span>) </span>{
+  <span class="hljs-keyword">return</span> a + b;
+}
+<span class="hljs-built_in">console</span>.log(sum.toString());
+<span class="hljs-comment">// function sum(a, b) {</span>
+<span class="hljs-comment">//  return a + b;</span>
+<span class="hljs-comment">// }</span>
+</div></code></pre>
+
+</body>
+</html>
