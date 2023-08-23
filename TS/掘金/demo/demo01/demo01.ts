@@ -1,234 +1,107 @@
+// 原始类型的类型标注
 const name1: string = "zhangzf99";
 const age: number = 10;
 const bool: boolean = true;
 const undef: undefined = undefined;
 const nul: null = null;
 const obj: object = { name1 };
-const bigint1: bigint = 90909907986756746545n;
-const bigint2: bigint = BigInt(90909907986756746545);
+const bigInt1: bigint = 90909907986756746545n;
+const bigint2: bigint = BigInt(90909907986756746545n);
 const symbolVar: symbol = Symbol("unique");
 
-const temp1: null = null;
-const temp2: undefined = undefined;
-// const temp3: string = null; // 仅在关闭 strictNullChecks 时成立，下同
-// const temp4: string = undefined;
-
-function func1() {}
-function func2() {
-  return;
+// 函数
+function fun1(name1: string): void {
+  console.log("name1", name1);
 }
-function func3(): void {
-  return undefined;
+function fun2(name1: string): string {
+  return name1;
 }
 
-const arr1: string[] = ["111", "222"];
-const arr2: Array<number> = [111, 2];
-// console.log(arr1[999]);
+// 数组
+const arr1: string[] = ["111"];
+const arr2: Array<number> = [111];
 
-const arr3: [string, number, null] = ["111", 11, null];
-// console.log(arr3[999]);
+// 元组
+const arr3: [string, number, null] = ["111", 1, null];
+// console.log(arr3[99]); // 报错
+const arr4: [string, number?, boolean?] = ["111", 1, true];
 
-const arr4: [string, number?, boolean?] = ["111", 11];
-// console.log(arr4.length);
+const arr5: [name: string, age: number, male: boolean] = ["zhangzf", 10, true];
 
-const arr5: [name: string, age: number, male: boolean] = ["zhangzf", 18, true];
-const arr6: [name: string, age: number, male?: boolean] = ["zhangzf", 18];
+const arr6: [name: string, age: number, male?: boolean] = ["zhangzf", 19];
 
-const arr7: string[] = [];
-const [ele1, ele2, ...rest] = arr7;
-
-const arr8: [string, number, boolean] = ["111", 11, true];
-// const [name2, age2, male, other] = arr8;
-
+// 接口
 interface IDescription {
   name: string;
   age: number;
-  male: boolean;
+  male?: boolean;
+  func: Function;
 }
 const obj1: IDescription = {
-  name: "zhangzf",
-  age: 18,
-  male: true,
-};
-// obj1.name = 222
-
-interface IDescription1 {
-  name: string;
-  age: number;
-  male?: boolean;
-  func?: Function;
-}
-const obj2: IDescription1 = {
-  name: "zhangzf",
-  age: 18,
-  male: true,
+  name: "zhangzf99",
+  age: 12,
+  func() {},
 };
 
 interface IDescription2 {
   readonly name: string;
   age: number;
 }
-const obj3: IDescription2 = {
-  name: "zhangzf",
-  age: 18,
+const obj2: IDescription2 = {
+  name: "zhangzf99",
+  age: 10,
 };
-// obj3.name = "zhangzf99";
+// obj2.name = "zhangzf"; // 报错
 
-const uniqueSymbolFoo: unique symbol = Symbol("zhangzf");
-// const uniqueSymbolBar: unique symbol = uniqueSymbolFoo; // 不能将类型“typeof uniqueSymbolFoo”分配给类型“typeof uniqueSymbolBar”。
-
-declare const uniqueSymbolFoo1: unique symbol;
-// const uniqueSymbolBaz: typeof uniqueSymbolFoo = uniqueSymbolFoo1;
-
-const str: "zhangzf" = "zhangzf";
-const num: 59 = 59;
-const bool1: true = true;
-
-interface Tmp {
-  mixed: true | string | 599 | {} | (() => {}) | (1 | 2);
+interface Res {
+  code: 10010 | 10011 | 10012;
+  status: "success" | "failure";
+  data: any;
 }
 
-// interface Tmp1 {
-//   user:
-//     | {
-//         vip: true;
-//         expires: string;
-//       }
-//     | {
-//         vip: false;
-//         promotion: string;
-//       };
-// }
-// declare var tmp: Tmp1;
-// if (tmp.user.vip) {
-//   console.log(tmp.user.expires);
-// }
-
-interface Tmp2 {
-  obj: {
-    name: "zhangzf";
-    age: 18;
-  };
-}
-const tmp: Tmp2 = {
-  obj: {
-    name: "zhangzf",
-    age: 18,
-  },
-};
-
-enum PageUrl {
+// 枚举
+enum pageUrl {
   Home_Page_Url = "url1",
-  Setting_Page_Url = "url2",
+  SetTing_Page_Url = "url2",
   Share_Page_Url = "url3",
 }
-const home = PageUrl.Home_Page_Url;
+const home = pageUrl.Home_Page_Url;
 
-enum Items {
-  Foo,
-  Bar,
-  Baz,
-}
-
-enum Items1 {
-  // 0
-  Foo,
-  Bar = 599,
-  // 600
-  Baz,
-}
-
-const returnNum = () => 100 + 499;
-enum Items2 {
-  Foo = returnNum(),
-  Bar = 599,
-  Baz,
-}
-
-enum Items3 {
-  Baz,
-  Foo = returnNum(),
-  Bar = 599,
-}
-
-enum Mixed {
-  Num = 599,
-  Str = "zhangzf",
-}
-
-enum Items4 {
-  Foo,
-  Bar,
-  Baz,
-}
-const fooValue = Items4.Foo; // 0
-const fooKey = Items[0]; // 'Foo'
-
-const enum Items5 {
-  Foo,
-  Bar,
-  Baz,
-}
-const fooValue1 = Items.Foo; // 0
-
+// 函数
 function foo(name: string): number {
   return name.length;
 }
-
-const foo1 = function (name: string): number {
+const foo1: (name: string) => number = function (name) {
   return name.length;
 };
-
-const foo2: (name: string) => number = function (name) {
-  return name.length;
-};
-
 const foo3 = (name: string): number => {
   return name.length;
 };
-
 const foo4: (name: string) => number = (name) => {
   return name.length;
 };
-
-type FucnFoo = (name: string) => number;
-const foo5: FucnFoo = (name) => {
+type FuncFoo = (name: string) => number;
+const foo5: FuncFoo = (name) => {
   return name.length;
 };
 
-interface FuncFooStruct {
-  (name: string): number;
+// void类型
+function foo6(name: string): void {
+  console.log(name);
 }
-
-function foo6(): void {}
-function bar(): void {
+function foo7(): undefined {
   return;
 }
 
-function bar1(): undefined {
-  return;
-}
-
-// 在函数逻辑中注入可选参数默认值
-function foo7(name: string, age?: number): number {
-  const inputAge = age || 18;
-  return name.length + inputAge;
-}
-// 直接为可选参数声明默认值
+// 可选参数与rest参数
 function foo8(name: string, age: number = 18): number {
-  const inputAge = age;
-  return name.length + inputAge;
+  return name.length + age;
 }
 
-function foo9(name: string, age: number = 18): number {
-  const inputAge = age || 18;
-  return name.length + inputAge;
-}
+function foo9(arg1: string, ...rest: any[]) {}
+function foo10(arg1: string, ...rest: [number, string]) {}
 
-function foo10(arg1: string, ...rest: any[]) {}
-
-function foo11(arg1: string, ...rest: [number, string]) {}
-
+// 重载
 function func(foo: number, bar?: boolean): string | number {
   if (bar) {
     return String(foo);
@@ -236,50 +109,43 @@ function func(foo: number, bar?: boolean): string | number {
     return foo * 10;
   }
 }
+// 使用重载改写上述函数
+function func1(foo: number, bar: true): string;
+function func1(foo: number, bar?: false): number;
+function func1(foo: number, bar?: boolean): string | number {
+  if (bar) {
+    return String(foo);
+  } else {
+    return foo * 599;
+  }
+}
+const res1 = func(599); // number
+const res2 = func(599, true); // string
+const res3 = func(599, false); // number
 
-// function func1(foo: number, bar: true): string;
-// function func1(foo: number, bar?: false): number;
-// function func1(foo: number, bar?: boolean): string | number {
-//   if (bar) {
-//     return String(foo);
-//   } else {
-//     return foo * 599;
-//   }
-// }
-// const res1 = func(599); // number
-// const res2 = func(599, true); // string
-// const res3 = func(599, false); // number
+// 异步函数、generator函数等类型签名
+async function asyncFunc(): Promise<void> {}
 
+// 类
 class Foo {
   prop: string;
   constructor(inputProp: string) {
     this.prop = inputProp;
   }
-
   print(addon: string): void {
     console.log(`${this.prop} and ${addon}`);
   }
 
-  get propA(): string {
+  get PropA(): string {
     return `${this.prop}+A`;
   }
-
-  set propA(value: string) {
+  set PropA(value: string) {
     this.prop = `${value}+A`;
   }
 }
 
-const Foo1 = class {
-  prop: string;
-  constructor(inputProp: string) {
-    this.prop = inputProp;
-  }
-  print(addon: string): void {
-    console.log(`${this.prop} and ${addon}`);
-  }
-};
-
-class Foo3 {
+// 修饰符
+class Foo1 {
   private prop: string;
   constructor(inputProp: string) {
     this.prop = inputProp;
@@ -287,79 +153,22 @@ class Foo3 {
   protected print(addon: string): void {
     console.log(`${this.prop} and ${addon}`);
   }
-
-  public get propA(): string {
+  public get PropA(): string {
     return `${this.prop}+A`;
   }
-
-  public set propA(value: string) {
-    this.propA = `${value}+A`;
+  public set PropA(value: string) {
+    this.PropA = `${value}+A`;
   }
 }
 
-class Foo4 {
-  constructor(public arg1: string, private arg2: boolean) {}
-}
-new Foo4("zhangzf", true);
-
-class Foo5 {
-  constructor(public arg1: string, private arg2: boolean) {}
-}
-new Foo5("zhangzf", true);
-
-class Foo6 {
-  static staticHandle() {}
-  public instanceHandle() {}
-}
-
-class Base {
-  print() {}
-}
-class Derived extends Base {
-  print() {
-    super.print();
-  }
-}
-
-abstract class AbsFoo {
-  abstract absProp: string;
-  abstract get absGetter(): string;
-  abstract absMethod(name: string): string;
-}
-
-class Foo12 implements AbsFoo {
-  absProp: string = "zhangzf";
-  get absGetter() {
-    return "zhangzf";
-  }
-  absMethod(name: string): string {
-    return name;
-  }
-}
-
-interface FooStruct {
-  absProp: string;
-  get absGetter(): string;
-  absMethod(input: string): string;
-}
-class Foo7 implements FooStruct {
-  absProp: string = "linbudu";
-
-  get absGetter() {
-    return "linbudu";
-  }
-
-  absMethod(name: string) {
-    return name;
-  }
-}
-
-// interface IFoo {
-//   name: string;
-// }
-// declare const obj: {
-//   foo: IFoo;
-// };
-// const { foo = {} as IFoo } = obj;
-
-type StatusCode = 200 | 301 | 400 | 500 | 502;
+// unknown类型
+let unknownVar: unknown = "linbudu";
+unknownVar = false;
+unknownVar = "linbudu";
+unknownVar = {
+  site: "juejin",
+};
+unknownVar = () => {};
+// const val1: string = unknownVar; // Error
+const val5: any = unknownVar;
+const val6: unknown = unknownVar;
